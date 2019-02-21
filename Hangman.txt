@@ -1,0 +1,165 @@
+import java.util.*;
+import java.io.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+public class Hangman
+{
+static String words[];
+static int sequence[];
+static String name;
+static int totPoints;
+public static boolean occursBefore(int a[],int index,int num)
+{
+int i;
+for(i=0;i<index;i++)
+{
+if(a[i]==num)
+ {
+return true;
+ }
+}
+return false;
+}
+
+public static void buildSequence()throws IOException
+{
+buildDatabase();
+int i,size,x;
+size=words.length;
+for(i=0;i<size;i++)
+{
+do
+{
+x=(int)(size*Math.random());
+} while(occursBefore(sequence,i,x));
+sequence[i]=x;
+}
+}
+public static void buildDatabase()throws IOException
+{
+/*
+try
+{
+Thread.sleep(2000);
+}
+catch(Exception e)
+{}
+int response = JOptionPane.showConfirmDialog(null, "Do you want to continue?", "Confirm",
+JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE); 
+*/
+FileReader fr;
+BufferedReader br;
+String str;
+int size,i;
+fr=new FileReader("gameWords.txt");
+br =new BufferedReader(fr);
+size=0;
+while(true)
+{
+str=br.readLine();
+if(str.equals(""))
+{
+    break;
+}
+size++;
+}
+br.close();
+fr.close();
+words=new String[size];
+sequence=new int[size];
+fr=new FileReader("gameWords.txt");
+br =new BufferedReader(fr);
+i=0;
+while(true)
+{
+str=br.readLine();
+if(str.equals(""))
+{
+    break;
+}
+words[i++]=str;
+}
+br.close();
+fr.close();
+}
+
+public static void mainMenu()throws IOException
+{    
+int i,choice,size;
+String str,yesno;
+char ch1;
+Date d=new Date();
+Scanner sc=new Scanner(System.in);
+Scanner sc1=new Scanner(System.in);
+buildDatabase();
+buildSequence();
+size=words.length;
+i=0;
+while(true)
+{
+System.out.print("\f");
+System.out.print("                          "+d.toString()+"\n");
+System.out.print("********************************************************************************\n");
+System.out.print("********************************************************************************\n");
+System.out.print("*************************(WELCOME TO HANGMAN MAIN MENU)*************************************\n");
+System.out.print("********************************************************************************\n");
+System.out.print("********************************************************************************\n");
+System.out.print("Type 1 for Rules\n");
+System.out.print("Type 2 to Play Hangman\n");
+System.out.print("Type 3 to Quit\n");
+System.out.print("Enter choice (1/2/3)::");
+choice=sc.nextInt();
+System.out.print("\n\n");
+if(choice==3)
+{
+System.out.print("Exiting Main Menu , Please Wait");
+try
+{
+Thread.sleep(3000);
+}
+catch(Exception e)
+{}
+break;
+}
+else if(choice==1)
+{
+Rules obj1=new Rules();
+obj1.setSize(400,600);
+obj1.setVisible(true);
+}
+else if(choice==2)
+{
+System.out.print("\f");
+System.out.print("Enter your first name::");
+name=sc1.nextLine();
+while(true)
+{
+str=words[sequence[i]];
+new GamePlay(str,name);
+i=(i+1)%size;
+do
+{
+System.out.print("\f");
+System.out.print(name+", would you like to continue playing(Y/N)::");
+yesno=sc1.nextLine();
+ch1=yesno.charAt(0);
+ch1=Character.toUpperCase(ch1);
+}while(ch1!='Y' && ch1!='N');
+if(ch1=='N')
+{
+break;
+}
+}
+}
+else
+{
+System.out.print("Wrong Choice !");
+}
+System.out.print("\n\nPress <Enter> to return to Main Menu");
+sc1.nextLine();
+}
+System.out.print("\f");
+System.out.print("Program Terminated");
+}
+}
